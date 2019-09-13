@@ -57,7 +57,7 @@ class BranchEmployees(db.Model):
     employee_id = db.Column(db.Integer, db.ForeignKey('employees.employee_id'), nullable=False)
     start_date = db.Column(db.DateTime, nullable=True)
     end_date = db.Column(db.DateTime, nullable=True)
-    minimum_balance_restriction = db.Column(db.Number, nullable=True)
+    minimum_balance_restriction = db.Column(db.Numeric, nullable=True)
     insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     update_at = db.Column(db.DateTime, nullable=True)
 
@@ -66,7 +66,7 @@ class AccountType(db.Model):
     __tablename__ = "account_type"
 
     account_type = db.Column(db.String(20), primary_key=True)
-    minimum_balance_restriction = db.Column(db.Number, nullable=True)
+    minimum_balance_restriction = db.Column(db.Numeric, nullable=True)
     insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     update_at = db.Column(db.DateTime, nullable=True)
 
@@ -121,7 +121,7 @@ class CCTransactions(db.Model):
     __tablename__ = "cc_transactions"
 
     transaction_id = db.Column(db.String(20), primary_key=True, nullable=False)
-    cc_number = db.Column(db.String(20), db.ForeignKey('credit_cards.cc__numbers'))
+    cc_number = db.Column(db.String(20), db.ForeignKey('credit_cards.cc_numbers'))
     transaction_date = db.Column(db.Date, nullable=True)
     amount = db.Column(db.Numeric(10,2), nullable=True)
     merchant_details = db.Column(db.String(45), nullable=False)
