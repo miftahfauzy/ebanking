@@ -34,6 +34,22 @@ class Branches(db.Model):
     update_at = db.Column(db.DateTime, nullable=True)
 
 
+class Employees(db.Model):
+    __tablename__ = "employees"
+    employee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    first_name = db.Column(db.String(45), nullable=True)
+    last_name = db.Column(db.String(45), nullable=True)
+    supervisor_id = db.Column(db.Integer, db.ForegnKey('employees.employee_id'), nullable=False)
+    level_of_access = db.Column(db.String(15), nullable=True)
+    date_of_birth = db.Column(db.Date, nullable=True)
+    street_address = db.Column(db.String(50), nullable=True)
+    city = db.Column(db.String(25), nullable=True)
+    state = db.Column(db.String(3), nullable=True)
+    zipcode = db.Column(db.Integer, nullable=True)
+    insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    update_at = db.Column(db.DateTime, nullable=True)
+
+
 class AccountType(db.Model):
     __tablename__ = "account_type"
 
@@ -87,7 +103,6 @@ class CreditCards(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
     insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     update_at = db.Column(db.DateTime, nullable=True)
-
 
 
 async def migrate():
