@@ -108,10 +108,37 @@ class BankingTransactions(db.Model):
 class CreditCards(db.Model):
     __tablename__ = "credit_cards"
 
-    cc_numbers = db.Column(db.String(20), primary_key=True, nullable=False)
+    cc_number = db.Column(db.String(20), primary_key=True, nullable=False)
     maximum_limit = db.Column(db.Numeric, nullable=True)
     expiry_date = db.Column(db.Date, nullable=True)
     credit_score = db.Column(db.Integer, nullable=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
+    insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    update_at = db.Column(db.DateTime, nullable=True)
+
+
+class CCTransactions(db.Model):
+    __tablename__ = "cc_transactions"
+
+    transaction_id = db.Column(db.String(20), primary_key=True, nullable=False)
+    cc_number = db.Column(db.String(20), db.ForeignKey('credit_cards.cc__numbers'))
+    transaction_date = db.Column(db.Date, nullable=True)
+    amount = db.Column(db.Numeric(10,2), nullable=True)
+    merchant_details = db.Column(db.String(45), nullable=False)
+    insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    update_at = db.Column(db.DateTime, nullable=True)
+
+
+class Loan(db.Model):
+    __tablename__ = "loan"
+
+    loan_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    duration_in_years = db.Column(db.Numeric(4,2), nullable=True)
+    loan_start_date = db.Column(db.Date, nullable=True)
+    interest_rate = db.Column(db.Numeric(4,2), nullable=True)
+    loan_amount_taken = db.Column(db.Numeric(10,2), nullable=True)
+    loan_amount_repaid = db.Column(db.Numeric(10,2), nullable=True)
+    loan_type = db.Column(db.String(45), nullable=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
     insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     update_at = db.Column(db.DateTime, nullable=True)
