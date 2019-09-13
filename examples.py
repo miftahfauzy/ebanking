@@ -16,7 +16,7 @@ async def main():
         await db.gino.create_all()
 
         # Create object, `id` is assigned by database
-        u1 = await User.create(nickname='fantix')
+        u1 = await User.create(nickname='fantix')
         print(u1.id, u1.nickname) # 1 fantix
 
         # Execute complex statement and return command status
