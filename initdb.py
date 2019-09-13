@@ -39,7 +39,7 @@ class Employees(db.Model):
     employee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(45), nullable=True)
     last_name = db.Column(db.String(45), nullable=True)
-    supervisor_id = db.Column(db.Integer, db.ForegnKey('employees.employee_id'), nullable=False)
+    supervisor_id = db.Column(db.Integer, db.ForeignKey('employees.employee_id'), nullable=False)
     level_of_access = db.Column(db.String(15), nullable=True)
     date_of_birth = db.Column(db.Date, nullable=True)
     street_address = db.Column(db.String(50), nullable=True)
