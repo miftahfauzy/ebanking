@@ -45,13 +45,21 @@ class AccountType(db.Model):
 
 class Accounts(db.Model):
     __tablename__ = "accounts"
+
     account_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     account_balance = db.Column(db.Numeric, nullable=True)
-    street_address = db.Column(db.String(50), nullable=True)
-    city = db.Column(db.String(25), nullable=True)
-    state = db.Column(db.String(3), nullable=True)
-    zipcode = db.Column(db.Integer, nullable=True)
-    phone_number = db.Column(db.String(12), nullable=True)
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.branch_id'), nullable=True)
+    date_opened = db.Column(db.Date, nullable=True)
+    account_type = db.Column(db.String(20), db.ForeignKey('account_type.account_type'), nullable=True)
+    insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    update_at = db.Column(db.DateTime, nullable=True)
+
+
+class AccountCustomers(db.Model):
+    __tablename__ = "account_customers"
+
+    account_id = db.Column(db.Integer, db.ForeignKey('accounts.account_id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), nullable=False)
     insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     update_at = db.Column(db.DateTime, nullable=True)
 
