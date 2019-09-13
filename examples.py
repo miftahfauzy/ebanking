@@ -1,6 +1,8 @@
+import asyncio
 from gino import Gino
 
 db = Gino()
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -9,7 +11,7 @@ class User(db.Model):
     nickname = db.Column(db.Unicode(),default='noname')
 
 
-async def main():
+async def migrate():
     async with db.with_bind('asyncpg://localhost/gino'):
 
         # Create tables
@@ -31,3 +33,6 @@ async def main():
         async with db.transaction():
             async for u in User.query.order_by(User.id).gino.iterate():
                 print(u.id, u.nickname)
+
+
+asyncio.get_event_loop().run_until_complete(migrate())
