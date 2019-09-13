@@ -12,14 +12,14 @@ class User(db.Model):
 
 
 async def migrate():
-    async with db.with_bind('asyncpg://localhost/gino'):
+    async with db.with_bind('asyncpg://miftah:fonez@localhost/gino'):
 
         # Create tables
         await db.gino.create_all()
 
         # Create object, `id` is assigned by database
         u1 = await User.create(nickname='fantix')
-        print(u1.id, u1.nickname) # 1 fantix
+        print(u1.id, u1.nickname) # 1 fantix:
 
         # Execute complex statement and return command status
         status, result = await User.update.values(
