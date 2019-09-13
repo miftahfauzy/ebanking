@@ -121,7 +121,7 @@ class CCTransactions(db.Model):
     __tablename__ = "cc_transactions"
 
     transaction_id = db.Column(db.String(20), primary_key=True, nullable=False)
-    cc_number = db.Column(db.String(20), db.ForeignKey('credit_cards.cc_numbers'))
+    cc_number = db.Column(db.String(20), db.ForeignKey('credit_cards.cc_number'))
     transaction_date = db.Column(db.Date, nullable=True)
     amount = db.Column(db.Numeric(10,2), nullable=True)
     merchant_details = db.Column(db.String(45), nullable=False)
