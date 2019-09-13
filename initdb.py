@@ -4,8 +4,8 @@ from gino import Gino
 db = Gino()
 
 
-class Customer(db.Model):
-    __tablename__ = "customer"
+class Customers(db.Model):
+    __tablename__ = "customers"
 
     customer_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(45), nullable=True)
@@ -59,9 +59,35 @@ class AccountCustomers(db.Model):
     __tablename__ = "account_customers"
 
     account_id = db.Column(db.Integer, db.ForeignKey('accounts.account_id'), nullable=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
     insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
     update_at = db.Column(db.DateTime, nullable=True)
+
+
+class BankingTransactions(db.Model):
+    __tablename__ = "banking_transactions"
+
+    transaction_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    maximum_limit = db.Column(db.Numeric, nullable=True)
+    transaction_type = db.Column(db.String(45), nullable=False)
+    description = db.Column(db.String(45), nullable=True)
+    date = db.Column(db.Date, nullable=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
+    insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    update_at = db.Column(db.DateTime, nullable=True)
+
+
+class CreditCards(db.Model):
+    __tablename__ = "credit_cards"
+
+    cc_numbers = db.Column(db.String(20), primary_key=True, nullable=False)
+    maximum_limit = db.Column(db.Numeric, nullable=True)
+    expiry_date = db.Column(db.Date, nullable=True)
+    credit_score = db.Column(db.Integer, nullable=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id'), nullable=False)
+    insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    update_at = db.Column(db.DateTime, nullable=True)
+
 
 
 async def migrate():
