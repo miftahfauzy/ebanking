@@ -50,6 +50,18 @@ class Employees(db.Model):
     update_at = db.Column(db.DateTime, nullable=True)
 
 
+class BranchEmployees(db.Model):
+    __tablename__ = "branch_employees"
+
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.branch_id'), nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.employee_id'), nullable=False)
+    start_date = db.Column(db.DateTime, nullable=True)
+    end_date = db.Column(db.DateTime, nullable=True)
+    minimum_balance_restriction = db.Column(db.Number, nullable=True)
+    insert_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    update_at = db.Column(db.DateTime, nullable=True)
+
+
 class AccountType(db.Model):
     __tablename__ = "account_type"
 
