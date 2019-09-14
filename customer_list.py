@@ -1,6 +1,7 @@
 import asyncio
 import json
 import pprint
+from datetime import datetime
 from initdb import db, Customers
 
 
@@ -52,6 +53,50 @@ class CustomerService:
         }
         await db.pop_bind().close()
         return dict_customer
+
+    async def update_customer(_customer_id, upd_customer):
+        await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
+
+        customer_parse = json.loads((json.dumps(upd_customer)))
+
+        # get its customer
+        mcustomer_id = await Customers.select('customer_id').where(
+            Customers.customer_id == _customer_id).gino.scalar()
+        assert mcustomer_id == Customers.customer_id  # they are both 'the same' before the update
+
+        # modification here
+        await Customers.update(
+            # customer_id=customer_parse['customer_id'],
+            first_name=customer_parse['first_name'],
+            last_name=customer_parse['last_name'],
+            date_of_birth=customer_parse['date_of_birth'],
+            street_address=customer_parse['street_address'],
+            city=customer_parse['city'],
+            state=customer_parse['state'],
+            zipcode=customer_parse['zipcode'],
+            email=customer_parse['email'],
+            gender=customer_parse['gender'],
+            insert_at=customer_parse['insert_at'],
+            update_at=datetime.now()
+        ).apply()
+
+        result_customer = {
+            "customer_id": customer_parse['customer_id'],
+            "first_name": customer_parse['first_name'],
+            "last_name": customer_parse['last_name'],
+            "date_of_birth": customer_parse['date_of_birth'],
+            "street_address": customer_parse['street_address'],
+            "city": customer_parse['city'],
+            "state": customer_parse['state'],
+            "zipcode": customer_parse['zipcode'],
+            "email": customer_parse['email'],
+            "gender": customer_parse['gender'],
+            "insert_at": customer_parse['insert_at'],
+            "update_at": datetime.now(),
+        }
+
+        await db.pop_bind().close()
+        return result_customer
 
 
 # customers_dict = asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
