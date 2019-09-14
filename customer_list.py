@@ -55,7 +55,7 @@ class CustomerService:
 
             query, params = db.compile(query)
             customer = await conn.fetchval(query, *params)
-            print(customer.customer_id, customer.first_name)
+            # print(customer.customer_id, customer.first_name)
 
             dict_customer = {
                 "customer_id": customer.customer_id,
