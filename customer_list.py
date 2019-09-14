@@ -61,8 +61,7 @@ class CustomerService:
 
 
 customer_id = 151
-print(
-    asyncio.get_event_loop().run_until_complete(
-        CustomerService.get_customer(customer_id)
-    )
-)
+customer = asyncio.get_event_loop().run_until_complete(CustomerService.get_customer(customer_id))
+pp = pprint.PrettyPrinter(width=41, compact=True)
+pp.pprint(customer)
+
