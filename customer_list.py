@@ -1,7 +1,8 @@
 import asyncio
 import asyncpg
 from initdb import db, Customers
-from sqlalchemy import select
+
+
 
 class CustomerService:
 
