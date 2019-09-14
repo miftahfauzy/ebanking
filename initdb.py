@@ -13,7 +13,7 @@ class Customers(db.Model):
     date_of_birth = db.Column(db.Date, nullable=True)
     street_address = db.Column(db.String(50), nullable=True)
     city = db.Column(db.String(25), nullable=True)
-    state = db.Column(db.String(3), nullable=True)
+    state = db.Column(db.String(25), nullable=True)
     zipcode = db.Column(db.Integer, nullable=True)
     email = db.Column(db.String(45), nullable=True)
     gender = db.Column(db.String(1), nullable=True)
