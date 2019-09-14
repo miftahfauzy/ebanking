@@ -28,7 +28,7 @@ class CustomerService:
             }
             customers.append(dict_customer)
         await db.pop_bind().close()
-        return json.dumps(_customers)
+        return customers
 
     # async def get_customer(_customer_id):
     #     async with db.with_bind("postgresql://miftah:fonez@localhost/ebanking"):
@@ -56,8 +56,8 @@ class CustomerService:
 
 customers_dict = asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
 pp = pprint.PrettyPrinter(width=41, compact=True)
-# pp.pprint(customers_dict)
-print(customers_dict)
+pp.pprint(customers_dict)
+# print(customers_dict)
 
 
 # customer_id = 151
