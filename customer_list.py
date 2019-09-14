@@ -8,24 +8,25 @@ class CustomerService:
 
         customers = await Customers.query.gino.all()
         # print(customers.customer_id, customers.first_name, customers.last_name, customers.date_of_birth)
-        async for customer in customers:
-            dict_customer = {
-                "customer_id": customer.customer_id,
-                "first_name": customer.first_name,
-                "last_name": customer.last_name,
-                "date_of_birth": customer.date_of_birth,
-                "street_address": customer.street_address,
-                "city": customer.city,
-                "state": customer.state,
-                "zipcode": customer.zipcode,
-                "email": customer.email,
-                "gender": customer.gender,
-                "insert_at": customer.insert_at,
-                "update_at": customer.update_at,
-            }
-            customers.append(dict_customer)
-            await db.pop_bind().close()
-            return customers
+        async with db.transaction():
+            async for customer in customers:
+                dict_customer = {
+                    "customer_id": customer.customer_id,
+                    "first_name": customer.first_name,
+                    "last_name": customer.last_name,
+                    "date_of_birth": customer.date_of_birth,
+                    "street_address": customer.street_address,
+                    "city": customer.city,
+                    "state": customer.state,
+                    "zipcode": customer.zipcode,
+                    "email": customer.email,
+                    "gender": customer.gender,
+                    "insert_at": customer.insert_at,
+                    "update_at": customer.update_at,
+                }
+                customers.append(dict_customer)
+                await db.pop_bind().close()
+                return customers
 
     # async def get_customer(_customer_id):
     #     async with db.with_bind("postgresql://miftah:fonez@localhost/ebanking"):
