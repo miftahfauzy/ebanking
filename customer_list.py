@@ -25,6 +25,6 @@ async def migrate():
                     "update_at": customer.update_at
                 }
                 customers.append(dict_customer)
-                return customers
+            return customers
 
 print(asyncio.get_event_loop().run_until_complete(migrate()))
