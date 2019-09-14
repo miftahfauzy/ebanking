@@ -6,9 +6,10 @@ class CustomerService:
     async def customer_list():
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
 
-        customers = await Customers.query.gino.all()
+        _customers = await Customers.query.gino.all()
+        customers = []
         # print(customers.customer_id, customers.first_name, customers.last_name, customers.date_of_birth)
-        for customer in customers:
+        for customer in _customers:
             dict_customer = {
                 "customer_id": customer.customer_id,
                 "first_name": customer.first_name,
