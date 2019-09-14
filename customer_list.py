@@ -31,7 +31,6 @@ class CustomerService:
                     customers.append(dict_customer)
                 return customers
 
-
     async def get_customer(_customer_id):
 
         conn = await asyncpg.connect('postgresql://miftah:fonez@localhost/gino')
@@ -53,5 +52,7 @@ class CustomerService:
         return dict_customer
 
 # print(asyncio.get_event_loop().run_until_complete(CustomerService.customer_list()))
+
+
 customer_id = 151
 print(asyncio.get_event_loop().run_until_complete(CustomerService.get_customer(customer_id)))
