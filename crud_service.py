@@ -45,7 +45,10 @@ class CustomerService:
                             "insert_at": customer.insert_at,
                             "update_at": customer.update_at
                         }
-                        customers.append(dict_customer)
+                        await customers.append(dict_customer)
             return customers
         except ValueError:
             return str(ValueError)
+
+
+asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
