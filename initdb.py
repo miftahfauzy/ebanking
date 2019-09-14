@@ -144,9 +144,9 @@ class Loan(db.Model):
     update_at = db.Column(db.DateTime, nullable=True)
 
 
-async def migrate():
-    await db.set_bind('postgres://miftah:fonez@localhost/ebanking')
-    await db.gino.create_all()
+# async def migrate():
+#     await db.set_bind('postgres://miftah:fonez@localhost/ebanking')
+    # await db.gino.create_all()
 
 
-asyncio.get_event_loop().run_until_complete(migrate())
+# asyncio.get_event_loop().run_until_complete(migrate())
