@@ -1,5 +1,5 @@
 import asyncio
-from initdb import Customers
+from initdb import db, Customers
 
 
 async def migrate():
