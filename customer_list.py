@@ -53,7 +53,8 @@ class CustomerService:
     #         return dict_customer
 
 
-print(json.dumps(asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())))
+customers_dict = asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
+print(json.dumps(customers_dict), indent=4)
 
 
 # customer_id = 151
