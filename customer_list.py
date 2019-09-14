@@ -33,6 +33,9 @@ class CustomerService:
                 return customers
 
     async def get_customer(_customer_id):
+        from gino import Gino
+
+        db = Gino()
 
         conn = await asyncpg.connect('postgresql://miftah:fonez@localhost/ebanking')
         # query = select(
