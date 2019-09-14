@@ -1,4 +1,5 @@
 import asyncio
+import json
 from initdb import db, Customers
 
 
@@ -52,7 +53,7 @@ class CustomerService:
     #         return dict_customer
 
 
-print(asyncio.get_event_loop().run_until_complete(CustomerService.customer_list()))
+print(json.dump(asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())))
 
 
 # customer_id = 151
