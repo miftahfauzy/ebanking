@@ -41,7 +41,7 @@ class CustomerService:
         #
         # )
         async with conn.transaction():
-            query, params = db.compile(Customer.query.where(Customers.customer_id == _customer_id))
+            query, params = db.compile(Customers.query.where(Customers.customer_id == _customer_id))
             async for customer in Customers.map(conn.cursor(query, *params)):
                 print(customer.customer_id, customer.first_name)
 
