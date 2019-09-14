@@ -1,8 +1,5 @@
 import asyncio
-import json
-from datetime import datetime
 
-from gino import Gino
 from initdb import (
     Customers,
     Branches,
@@ -17,7 +14,7 @@ from initdb import (
     Loan
 )
 
-db = Gino()
+
 
 
 class CustomerService:

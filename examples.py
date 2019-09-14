@@ -1,5 +1,6 @@
 import asyncio
 from gino import Gino
+from sqlalchemy import select
 
 db = Gino()
 
