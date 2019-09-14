@@ -5,7 +5,6 @@ from initdb import db, Customers
 class CustomerService:
     async def customer_list():
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
-        await db.transaction()
 
         customers = []
 
