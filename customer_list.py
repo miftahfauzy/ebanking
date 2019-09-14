@@ -33,7 +33,7 @@ class CustomerService:
 
     async def get_customer(_customer_id):
 
-        conn = await asyncpg.connect('postgresql://miftah:fonez@localhost/gino')
+        conn = await asyncpg.connect('postgresql://miftah:fonez@localhost/ebanking')
         customer = await Customers.get(conn, _customer_id)
         dict_customer = {
             "customer_id": customer.customer_id,
