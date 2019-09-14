@@ -33,9 +33,6 @@ class CustomerService:
                 return customers
 
     async def get_customer(_customer_id):
-        from gino import Gino
-
-        db = Gino()
 
         conn = await asyncpg.connect('postgresql://miftah:fonez@localhost/ebanking')
         # query = select(
@@ -45,7 +42,7 @@ class CustomerService:
         #
         # )
         async with conn.transaction():
-            query, params = db.compile(Customers.query.where(Customers.customer_id == _customer_id))
+            query, params = Customers.query.where(Customers.customer_id == _customer_id)
             async for customer in Customers.map(conn.cursor(query, *params)):
                 print(customer.customer_id, customer.first_name)
 
