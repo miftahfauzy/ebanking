@@ -1,8 +1,5 @@
 import asyncio
-from gino import Gino
 from initdb import Customers
-
-db = Gino()
 
 
 async def migrate():
