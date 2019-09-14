@@ -4,9 +4,9 @@ from initdb import db, Customers
 
 
 class CustomerService:
-    async with db.with_bind('asyncpg://miftah:fonez@localhost/ebanking'):
-        async def customer_list():
 
+    async def customer_list():
+        async with db.with_bind('asyncpg://miftah:fonez@localhost/ebanking'):
             async with db.transaction():
 
                 customers = []
