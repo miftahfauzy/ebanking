@@ -1,5 +1,6 @@
 import asyncio
 import json
+import pprint
 from initdb import db, Customers
 
 
@@ -54,7 +55,8 @@ class CustomerService:
 
 
 customers_dict = asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
-print(json.dumps(customers_dict), indent=4)
+pp = pprint.PrettyPrinter(width=41, compact=True)
+pp.pprint(customers_dict, indent=4)
 
 
 # customer_id = 151
