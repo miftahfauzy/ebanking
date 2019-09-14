@@ -26,7 +26,7 @@ class CustomerService:
 
     def customer_list():
         try:
-            with db.with_bind('postgres://miftah:fonez@localhost/ebanking'):
+            with db.set_bind('postgres://miftah:fonez@localhost/ebanking'):
 
                 with db.transaction():
                     customers = []
