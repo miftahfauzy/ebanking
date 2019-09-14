@@ -56,7 +56,7 @@ class CustomerService:
 
 customers_dict = asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
 pp = pprint.PrettyPrinter(width=41, compact=True)
-pp.pprint(customers_dict, indent=4)
+pp.pprint(customers_dict)
 
 
 # customer_id = 151
