@@ -27,4 +27,4 @@ async def migrate():
                 customers.append(dict_customer)
                 return dict_customer
 
-asyncio.get_event_loop().run_until_complete(migrate())
+print(asyncio.get_event_loop().run_until_complete(migrate()))
