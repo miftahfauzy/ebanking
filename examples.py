@@ -28,7 +28,9 @@ async def migrate():
         ).where(
             User.id > 10,
         ).gino.status()
-        print(status) # UPDATE 8
+        print('result: ')
+        print(result)
+        print('status: ' + str(status))  # UPDATE 8
 
         # Iterate over the results of a large query in a transaction
         async with db.transaction():
