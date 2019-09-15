@@ -80,27 +80,27 @@ class CustomerService:
         #     update_at=datetime.now()
         # ).apply()
 
-        try:
-            # Execute complex statement and return command status
-            status, result = await Customers.update.values(
-                first_name=customer_parse['first_name'],
-                last_name=customer_parse['last_name'],
-                date_of_birth=customer_parse['date_of_birth'],
-                street_address=customer_parse['street_address'],
-                city=customer_parse['city'],
-                state=customer_parse['state'],
-                zipcode=customer_parse['zipcode'],
-                email=customer_parse['email'],
-                gender=customer_parse['gender'],
-                update_at=datetime.now()
-            ).where(
-                Customers.customer_id == _customer_id,
-            ).gino.status()
+        # Execute complex statement and return command status
+        status, result = await Customers.update.values(
+            first_name=customer_parse['first_name'],
+            last_name=customer_parse['last_name'],
+            date_of_birth=datetime.strptime(customer_parse['date_of_birth'], "%d%m%Y").date(),
+            street_address=customer_parse['street_address'],
+            city=customer_parse['city'],
+            state=customer_parse['state'],
+            zipcode=customer_parse['zipcode'],
+            email=customer_parse['email'],
+            gender=customer_parse['gender'],
+            update_at=datetime.now()
+        ).where(
+            Customers.customer_id == _customer_id,
+        ).gino.status()
 
+        if int(status[-1]) > 0:
             result_customer = {
                 "status:": "Success " + status,
                 "customer": {
-                    "customer_id": customer_parse['customer_id'],
+                    "customer_id": _customer_id,
                     "first_name": customer_parse['first_name'],
                     "last_name": customer_parse['last_name'],
                     "date_of_birth": customer_parse['date_of_birth'],
@@ -110,16 +110,16 @@ class CustomerService:
                     "zipcode": customer_parse['zipcode'],
                     "email": customer_parse['email'],
                     "gender": customer_parse['gender'],
-                    "update_at": datetime.now()
+                    "update_at": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
                 }
             }
             await db.pop_bind().close()
             return result_customer
-        except ValueError:
+        else:
             result_customer = {
-                "status:": "Failed " + status,
+                "status:": "Failed customer ID: " + str(_customer_id) + ', not found!',
                 "customer": {
-                    "customer_id": customer_parse['customer_id'],
+                    "customer_id": _customer_id,
                     "first_name": customer_parse['first_name'],
                     "last_name": customer_parse['last_name'],
                     "date_of_birth": customer_parse['date_of_birth'],
@@ -129,35 +129,58 @@ class CustomerService:
                     "zipcode": customer_parse['zipcode'],
                     "email": customer_parse['email'],
                     "gender": customer_parse['gender'],
-                    "update_at": datetime.now()
+                    "update_at": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
                 }
             }
             await db.pop_bind().close()
             return result_customer
 
+    async def delete_customer(_customer_id):
+        await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
 
+        status, result = await Customers.delete.where(Customers.customer_id == _customer_id).gino.status()
+        response_payload = {
+            "status": status,
+            "result": result
+        }
+        await db.pop_bind().close()
+        return response_payload
+
+
+
+
+# test all the function
+# -------------------------------------------------------------------------------
+# Customer List
 # customers_dict = asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
 # pp = pprint.PrettyPrinter(width=41, compact=True)
 # pp.pprint(customers_dict)
 # print(customers_dict)
 
-
-customer_id = 151
-customer_json = {
-    "first_name": 'Miftah',
-    "last_name": 'Fauzy',
-    "date_of_birth": '05/22/1968',
-    "street_address": 'jl. Kel. Margahayu IV No.7',
-    "city": 'Kota Bekasi',
-    "state": 'Bekasi',
-    "zipcode": '17113',
-    "email": 'miftahfauzy@outlook.com',
-    "gender": 'L',
-    "update_at": datetime.now()
-}
+# Get Customer by Customer ID
 # customer = asyncio.get_event_loop().run_until_complete(CustomerService.get_customer(customer_id))
-customer = asyncio.get_event_loop().run_until_complete(CustomerService.update_customer(customer_id, customer_json))
 
-pp = pprint.PrettyPrinter(width=40, compact=True)
-pp.pprint(customer)
+customer_id = 200
+# bod = datetime.strptime('22051968', "%d%m%Y").date()
+# customer_json = {
+#     "first_name": 'Miftah',
+#     "last_name": 'Fauzy',
+#     "date_of_birth": '22051968',
+#     "street_address": 'jl. Kel. Margahayu IV No.7',
+#     "city": 'Kota Bekasi',
+#     "state": 'Bekasi',
+#     "zipcode": 17113,
+#     "email": 'miftahfauzy@outlook.com',
+#     "gender": 'L'
+# }
+
+# Update Customer by Customer ID
+# customer = asyncio.get_event_loop().run_until_complete(CustomerService.update_customer(customer_id, customer_json))
+
+result = asyncio.get_event_loop().run_until_complete(CustomerService.delete_customer(customer_id))
+print(result)
+
+
+# pp = pprint.PrettyPrinter(width=40, compact=True)
+# pp.pprint(customer)
 
