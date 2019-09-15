@@ -147,6 +147,11 @@ class CustomerService:
             }
             await db.pop_bind().close()
             return result_customer
+    async def create_customer(json_customer):
+        await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
+
+        status, result = await Customers.create(json_customer)
+
 
     async def delete_customer(_customer_id):
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
@@ -190,7 +195,23 @@ customer_id = 200
 # Update Customer by Customer ID
 # customer = asyncio.get_event_loop().run_until_complete(CustomerService.update_customer(customer_id, customer_json))
 
-result = asyncio.get_event_loop().run_until_complete(CustomerService.delete_customer(customer_id))
+# Create Customer
+json_customer = {
+    "first_name": 'Miftah',
+    "last_name": 'Fauzy',
+    "date_of_birth": '22051968',
+    "street_address": 'jl. Kel. Margahayu IV No.7',
+    "city": 'Kota Bekasi',
+    "state": 'Bekasi',
+    "zipcode": 17113,
+    "email": 'miftahfauzy@outlook.com',
+    "gender": 'L',
+    "insert_at": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+    "update_at": ''
+}
+result = asyncio.get_event_loop().run_until_complete(CustomerService.delete_customer(json_customer))
+# Delete Customer by Customer ID
+# result = asyncio.get_event_loop().run_until_complete(CustomerService.delete_customer(customer_id))
 print(result)
 
 
