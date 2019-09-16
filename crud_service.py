@@ -240,10 +240,10 @@ json_customer = {
     "insert_at": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
     "update_at": None
 }
-result = asyncio.get_event_loop().run_until_complete(CustomerService.create_customer(json_customer))
+# result = asyncio.get_event_loop().run_until_complete(CustomerService.create_customer(json_customer))
 # Delete Customer by Customer ID
 # result = asyncio.get_event_loop().run_until_complete(CustomerService.delete_customer(customer_id))
-print(result)
+# print(result)
 
 
 # pp = pprint.PrettyPrinter(width=40, compact=True)
