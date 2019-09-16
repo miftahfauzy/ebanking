@@ -139,7 +139,7 @@ class CustomerResource:
         output = {}
 
         try:
-            updated_customer = customerService.update(vcustomer, customer_id)
+            updated_customer = CustomerService.update_customer(vcustomer, customer_id)
             output = {
                 "status": "Success Updated",
                 "http status": 200,
@@ -152,44 +152,6 @@ class CustomerResource:
                 "description": str(error),
                 "http status": 400,
                 "customer": customer,
-            }
-            return request.Response(code=400, json=output)
-
-    def patch_customer(request):
-        try:
-            vcustomer = request.json
-        except JSONDecodeError as jsonerror:
-            output = {
-                "status": "Error: 400 Bad Request",
-                "description": str(jsonerror) + " on JSON request body !",
-                "http status": 400,
-            }
-            return request.Response(code=400, json=output)
-        try:
-            customer_id = int(request.match_dict["customer_id"])
-        except ValueError as ve:
-            output = {
-                "status": "Error: 400 Bad Request",
-                "description": str(ve),
-                "http status": 400,
-            }
-            return request.Response(code=400, json=output)
-
-        customer = {}
-        output = {}
-
-        try:
-            updated_customer = customerService.patch(vcustomer, customer_id)
-            if updated_customer is not None:
-                return request.Response(code=200, json=updated_customer)
-            else:
-                return request.Response(code=400, json=updated_customer)
-        except KeyError as error:
-            output = {
-                "status": "Error: 400 Bad Request",
-                "description": str(error),
-                "http status": 400,
-                "customer": vcustomer,
             }
             return request.Response(code=400, json=output)
 
@@ -219,7 +181,7 @@ class CustomerResource:
             }
             return request.Response(code=400, json=output)
         try:
-            result = customerService.delete(_customer_id)
+            result = CustomerService.delete_customer(_customer_id)
             return request.Response(code=200, json=result)
         except ValueError as ve:
             output = {

@@ -154,7 +154,7 @@ class CustomerService:
             customer_parse = json.loads((json.dumps(json_customer)))
 
             customer = await Customers.create(
-                first_name=customer_parse['fist_name'],
+                first_name=customer_parse['first_name'],
                 last_name=customer_parse['last_name'],
                 date_of_birth=datetime.strptime(customer_parse['date_of_birth'], "%d%m%Y").date(),
                 street_address=customer_parse['street_address'],
@@ -168,7 +168,7 @@ class CustomerService:
             response_payload = {
                 "response": {
                     "status": 'Success',
-                    "result": customer
+                    "customer": json_customer
                 }
             }
             await db.pop_bind().close()
@@ -178,7 +178,7 @@ class CustomerService:
             response_payload = {
                 "response": {
                     "status": 'Failed ' + str(ValueError),
-                    "result": customer
+                    "customer": json_customer
                 }
             }
             await db.pop_bind().close()
