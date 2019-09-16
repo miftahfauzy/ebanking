@@ -151,7 +151,20 @@ class CustomerService:
     async def create_customer(json_customer):
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
         try:
-            customer = await Customers.create(json_customer)
+            customer_parse = json.loads((json.dumps(json_customer)))
+
+            customer = await Customers.create(
+                first_name=customer_parse['fist_name'],
+                last_name=customer_parse['last_name'],
+                date_of_birth=datetime.strptime(customer_parse['date_of_birth'], "%d%m%Y").date(),
+                street_address=customer_parse['street_address'],
+                city=customer_parse['city'],
+                state=customer_parse['state'],
+                zipcode=customer_parse['zipcode'],
+                email=customer_parse['email'],
+                gender=customer_parse['gender'],
+                insert_at=datetime.now()
+            )
             response_payload = {
                 "response": {
                     "status": 'Success',
