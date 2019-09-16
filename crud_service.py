@@ -150,8 +150,26 @@ class CustomerService:
 
     async def create_customer(json_customer):
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
+        try:
+            customer = await Customers.create(json_customer)
+            response_payload = {
+                "response": {
+                    "status": 'Success',
+                    "result": customer
+                }
+            }
+            await db.pop_bind().close()
+            return response_payload
 
-        status, result = await Customers.create(json_customer)
+        except ValueError
+            response_payload = {
+                "response": {
+                    "status": 'Failed ' + str(ValueError),
+                    "result": customer
+                }
+            }
+            await db.pop_bind().close()
+            return response_payload
 
     async def delete_customer(_customer_id):
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
