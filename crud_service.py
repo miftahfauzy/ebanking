@@ -161,7 +161,7 @@ class CustomerService:
             await db.pop_bind().close()
             return response_payload
 
-        except ValueError
+        except ValueError:
             response_payload = {
                 "response": {
                     "status": 'Failed ' + str(ValueError),
