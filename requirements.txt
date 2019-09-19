@@ -2,3 +2,6 @@ japronto
 gino
 asyncio
 marshmallow
+zope.sqlalchemy
+pony
+psycopg2

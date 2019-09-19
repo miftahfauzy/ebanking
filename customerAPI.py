@@ -27,7 +27,7 @@ class CustomerResource:
 
     def list_customer(request):
         try:
-            customers = asyncio.get_event_loop().run_until_complete(CustomerService.customer_list())
+            customers = CustomerService.customer_list()
             if len(customers) != 0:
                 output = {"status": "Success", "http status": 200, "customers": customers}
             else:

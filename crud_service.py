@@ -3,6 +3,16 @@ import json
 import pprint
 from datetime import datetime
 
+from sqlalchemy import create_engine
+from sqlalchemy import exc
+from sqlalchemy import inspect
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
+from zope.sqlalchemy import ZopeTransactionExtension
+
 from initdb import (
     db,
     Customers,
@@ -19,7 +29,7 @@ from initdb import (
 )
 
 class CustomerService:
-    async def customer_list():
+    def customer_list():
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
 
         _customers = await Customers.query.gino.all()
