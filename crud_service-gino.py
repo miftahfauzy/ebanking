@@ -2,11 +2,34 @@ import asyncio
 import json
 import pprint
 from datetime import datetime
-from initdb import db, Customers
 
+from sqlalchemy import create_engine
+from sqlalchemy import exc
+from sqlalchemy import inspect
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
+from zope.sqlalchemy import ZopeTransactionExtension
+
+from initdb import (
+    db,
+    Customers,
+    Branches,
+    Employees,
+    BranchEmployees,
+    AccountType,
+    Accounts,
+    AccountCustomers,
+    BankingTransactions,
+    CreditCards,
+    CCTransactions,
+    Loan
+)
 
 class CustomerService:
-    async def customer_list():
+    def customer_list():
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
 
         _customers = await Customers.query.gino.all()
@@ -135,6 +158,42 @@ class CustomerService:
             await db.pop_bind().close()
             return result_customer
 
+    async def create_customer(json_customer):
+        await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
+        try:
+            customer_parse = json.loads((json.dumps(json_customer)))
+
+            customer = await Customers.create(
+                first_name=customer_parse['first_name'],
+                last_name=customer_parse['last_name'],
+                date_of_birth=datetime.strptime(customer_parse['date_of_birth'], "%d%m%Y").date(),
+                street_address=customer_parse['street_address'],
+                city=customer_parse['city'],
+                state=customer_parse['state'],
+                zipcode=customer_parse['zipcode'],
+                email=customer_parse['email'],
+                gender=customer_parse['gender'],
+                insert_at=datetime.now()
+            )
+            response_payload = {
+                "response": {
+                    "status": 'Success',
+                    "customer": json_customer
+                }
+            }
+            await db.pop_bind().close()
+            return response_payload
+
+        except ValueError:
+            response_payload = {
+                "response": {
+                    "status": 'Failed ' + str(ValueError),
+                    "customer": json_customer
+                }
+            }
+            await db.pop_bind().close()
+            return response_payload
+
     async def delete_customer(_customer_id):
         await db.set_bind("postgresql://miftah:fonez@localhost/ebanking")
 
@@ -177,8 +236,24 @@ customer_id = 200
 # Update Customer by Customer ID
 # customer = asyncio.get_event_loop().run_until_complete(CustomerService.update_customer(customer_id, customer_json))
 
-result = asyncio.get_event_loop().run_until_complete(CustomerService.delete_customer(customer_id))
-print(result)
+# Create Customer
+json_customer = {
+    "first_name": 'Miftah',
+    "last_name": 'Fauzy',
+    "date_of_birth": '22051968',
+    "street_address": 'jl. Kel. Margahayu IV No.7',
+    "city": 'Kota Bekasi',
+    "state": 'Bekasi',
+    "zipcode": 17113,
+    "email": 'miftahfauzy@outlook.com',
+    "gender": 'L',
+    "insert_at": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+    "update_at": None
+}
+# result = asyncio.get_event_loop().run_until_complete(CustomerService.create_customer(json_customer))
+# Delete Customer by Customer ID
+# result = asyncio.get_event_loop().run_until_complete(CustomerService.delete_customer(customer_id))
+# print(result)
 
 
 # pp = pprint.PrettyPrinter(width=40, compact=True)
