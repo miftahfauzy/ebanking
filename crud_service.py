@@ -19,6 +19,7 @@ class Branches(db.Entity):
     branches_employeess = Set('Branches_employees')
     accounts = Set('Account')
     bank_transaction = Required('Bank_transaction')
+    address = Required('Address')
 
 
 class Branches_employees(db.Entity):
@@ -143,6 +144,7 @@ class Address(db.Entity):
     update_at = Optional(datetime)
     employees = Set(Employee)
     customers = Set(Customer)
+    branchess = Set(Branches)
 
 
 class Transaction_types(db.Entity):
