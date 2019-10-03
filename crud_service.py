@@ -1,159 +1,224 @@
-from datetime import date
-from datetime import datetime
+from __future__ import absolute_import, print_function
+import json
 from decimal import Decimal
+from datetime import datetime
+
+from pony.converting import str2datetime
 from pony.orm import *
 
-
-db = Database()
-
-# PostgreSQL
-db.bind(provider='postgres', user='miftah', password='fonez', host='localhost', database='pony')
+from initdb_ebanking import *
 
 
-class Branches(db.Entity):
-    branch_id = PrimaryKey(int, auto=True)
-    branch_name = Optional(str, 45)
-    phone_number = Optional(str, 12)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    branches_employeess = Set('Branches_employees')
-    accounts = Set('Account')
-    bank_transaction = Required('Bank_transaction')
-    address = Required('Address')
+# Customer Service
+class CustomerService:
+    @db_session
+    def customer_list():
+        arr_customer = []
+        customers = Customer.select()
+
+        for customer in customers:
+            json_customer = {
+                "customer_id": customer[0],
+                "first_name": customer[1],
+                "last_name": customer[2],
+                "date_of_birth": customer[3],
+                "email": customer[4],
+                "insert_at": customer[5],
+                "update_at": customer[6],
+                "account_customer": customer[7],
+                "bank_transaction": customer[8],
+                "credit_card": customer[9],
+                "load": customer[10],
+                "address": customer[11],
+            }
+            arr_customer.append(json_customer)
+        return arr_customer
+
+    @db_session
+    def get_customerbyid(cust_id):
+        customer = Customer.get(customer_id=cust_id)
+        if customer is None:
+            result = {
+                "status": 401,
+                "message": "customer with id: " + str(cust_id) + " not found",
+            }
+            return result
+        customer_dict = customer.to_dict()
+
+        result = {
+            "status": 200,
+            "message": "customer found",
+            # "customer": customer_dict
+            "customer": {
+                "customer_id": customer.customer_id,
+                "first_name": customer.first_name,
+                "last_name": customer.last_name,
+                "date_of_birth": str(customer.date_of_birth),
+                "email": customer.email,
+                "account_customer": customer.account_customer,
+                "bank_transaction": customer.bank_transaction,
+                "credit_card": customer.credit_card,
+                "loan": customer.loan,
+                "address": customer.address,
+                "insert_at": str(customer.insert_at),
+                "update_at": str(customer.update_at),
+            },
+        }
+        return result
 
 
-class Branches_employees(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    branches = Required(Branches)
-    start_date = Optional(date)
-    end_date = Optional(date)
-    minimum_balance_restriction = Optional(Decimal)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    employee = Required('Employee')
+# Address Service
+class AddressService:
+    @db_session
+    def address_list():
+        arr_address = []
+        addresses = select(
+            (
+                a.address_id,
+                a.street_address1,
+                a.street_address2,
+                a.city,
+                a.zipcode,
+                a.state,
+                a.country,
+                a.insert_at,
+                a.update_at,
+            )
+            for a in Address
+        )[:]
+
+        for addr in addresses:
+            json_address = {
+                "address_id": addr[0],
+                "street_address1": addr[1],
+                "street_address2": addr[2],
+                "city": addr[3],
+                "zipcode": addr[4],
+                "state": addr[5],
+                "country": addr[6],
+                "insert_at": str(addr[7]),
+                "update_at": str(addr[8]),
+            }
+            arr_address.append(json_address)
+        return arr_address
+
+    @db_session
+    def get_addressbyid(addr_id):
+        address = Address.get(address_id=addr_id)
+        if address is None:
+            result = {
+                "status": 404,
+                "message": "Address with id: " + str(addr_id) + " not found",
+            }
+            return result
+        address_dict = address.to_dict()
+        result = {
+            "status": 200,
+            "message": "address found !",
+            # "address": address_dict
+            "address": {
+                "address_id": address.address_id,
+                "street_address1": address.street_address1,
+                "street_address2": address.street_address2,
+                "city": address.city,
+                "zipcode": address.zipcode,
+                "state": address.state,
+                "country": address.country,
+                "insert_at": str(address.insert_at),
+                "update_at": str(address.update_at),
+            },
+        }
+
+        return result
+
+    @db_session
+    def create_address(address_payload):
+        address_parse = json.loads(json.dumps(address_payload))
+        try:
+            _address = Address(
+                street_address1=address_parse["street_address1"],
+                street_address2=address_parse["street_address2"],
+                city=address_parse["city"],
+                zipcode=address_parse["zipcode"],
+                state=address_parse["state"],
+                country=address_parse["country"],
+                insert_at=datetime.now(),
+            )
+            commit()
+            result = {
+                "status": 201,
+                "message": "address created !",
+                # "address": _address.to_dict()
+                # }
+                "address": {
+                    "address_id": _address.address_id,
+                    "street_address1": _address.street_address1,
+                    "street_address2": _address.street_address2,
+                    "city": _address.city,
+                    "zipcode": _address.zipcode,
+                    "state": _address.state,
+                    "country": _address.country,
+                    "insert_at": str(_address.insert_at),
+                    "update_at": str(_address.update_at),
+                },
+            }
+            return result
+
+        except KeyError as error:
+            output = {
+                "status": "Error : missing key/value of: " + str(error),
+                "http status": 400,
+                "address": address_parse,
+            }
+            return output
+
+    @db_session
+    def update_address(address_payload, address_id):
+        address_parse = json.loads(json.dumps(address_payload))
+        try:
+            address = Address.get_for_update(address_id=address_id)
+            address.street_address1 = address_parse["street_address1"]
+            address.street_address2 = address_parse["street_address2"]
+            address.city = address_parse["city"]
+            address.zipcode = address_parse["zipcode"]
+            address.state = address_parse["state"]
+            address.country = address_parse["country"]
+            address.update_at = datetime.now()
+            commit()
+            result = {
+                "status": "Success",
+                "message": "Success Update address",
+                "address": {
+                    "street_address1": address_parse["street_address1"],
+                    "street_address2": address_parse["street_address2"],
+                    "city": address_parse["city"],
+                    "zzicode": address_parse["zipcode"],
+                    "state": address_parse["state"],
+                    "country": address_parse["country"],
+                    "updated_at": str(datetime.now()),
+                },
+            }
+            return result
+        except ValueError:
+            result = {
+                "status": "Failed",
+                "message": "Failed Update address",
+                "address": {
+                    "street_address1": address_parse["street_address1"],
+                    "street_address2": address_parse["street_address2"],
+                    "city": address_parse["city"],
+                    "zzicode": address_parse["zipcode"],
+                    "state": address_parse["state"],
+                    "country": address_parse["country"],
+                    "updated_at": str(datetime.now()),
+                },
+            }
+            return result
 
 
-class Account_type(db.Entity):
-    account_type = PrimaryKey(str, 20, auto=True)
-    minimum_balance_restriction = Optional(Decimal)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    accounts = Set('Account')
-
-
-class Account(db.Entity):
-    account_id = PrimaryKey(int, auto=True)
-    account_balance = Optional(Decimal)
-    branches = Required(Branches)
-    date_opened = Optional(date)
-    account_type = Required(Account_type)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    account_customer = Required('Account_customer')
-
-
-class Employee(db.Entity):
-    employee_id = PrimaryKey(int, auto=True)
-    employees = Set('Employee', reverse='supervisor_id')
-    level_of_access = Optional(str, 15)
-    supervisor_id = Required('Employee', reverse='employees')
-    branches_employeess = Set(Branches_employees)
-    first_name = Optional(str, 45)
-    last_name = Optional(str, 45)
-    birth_of_date = Optional(date)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    address = Required('Address')
-
-
-class Customer(db.Entity):
-    customer_id = PrimaryKey(int, auto=True)
-    first_name = Optional(str, 45)
-    last_name = Optional(str, 45)
-    date_of_birth = Optional(date)
-    email = Optional(str, 55)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    account_customer = Required('Account_customer')
-    bank_transaction = Required('Bank_transaction')
-    credit_card = Required('Credit_card')
-    loan = Required('Loan')
-    address = Required('Address')
-
-
-class Account_customer(db.Entity):
-    accounts = Set(Account)
-    customers = Set(Customer)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-
-
-class Bank_transaction(db.Entity):
-    transaction_id = PrimaryKey(int, auto=True)
-    maximum_limit = Optional(Decimal)
-    description = Optional(str)
-    transaction_date = Optional(datetime)
-    customers = Set(Customer)
-    branchess = Set(Branches)
-    transaction_types = Required('Transaction_types')
-
-
-class Credit_card(db.Entity):
-    cc_nmber = PrimaryKey(str, 20, auto=True)
-    maximum_limit = Optional(Decimal, precision=2)
-    expiry_date = Optional(date)
-    credit_score = Optional(int)
-    customers = Set(Customer)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    cc_transaction = Required('Cc_transaction')
-
-
-class Cc_transaction(db.Entity):
-    transaction_id = PrimaryKey(int, auto=True)
-    credit_cards = Set(Credit_card)
-    transaction_date = Optional(datetime)
-    amount = Optional(Decimal, precision=2)
-    merchant_details = Optional(str, 100)
-    insert_date = Optional(datetime)
-    update_date = Optional(datetime)
-
-
-class Loan(db.Entity):
-    loan_id = PrimaryKey(int, auto=True)
-    duration_in_years = Optional(int)
-    loan_start_date = Optional(date)
-    interest_rate = Optional(float)
-    loan_amount_taken = Optional(Decimal, precision=2)
-    loan_amount_repaid = Optional(Decimal, precision=2)
-    loan_type = Optional(str, 45)
-    customers = Set(Customer)
-    inset_at = Optional(datetime)
-    update_at = Optional(datetime)
-
-
-class Address(db.Entity):
-    address_id = PrimaryKey(int, auto=True)
-    street_address1 = Optional(str)
-    street_address2 = Optional(str)
-    city = Optional(str, 25)
-    zipcode = Optional(str, 15)
-    state = Optional(str, 45)
-    country = Optional(str, 45)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    employees = Set(Employee)
-    customers = Set(Customer)
-    branchess = Set(Branches)
-
-
-class Transaction_types(db.Entity):
-    transaction_type_code = PrimaryKey(str, 25, auto=True)
-    transaction_type_description = Optional(str)
-    insert_at = Optional(datetime)
-    update_at = Optional(datetime)
-    bank_transactions = Set(Bank_transaction)
-
-
-# sql_debug(True)
-db.generate_mapping(create_tables=True)
+# if __name__ == "__main__":
+# print(CustomerService.customer_list())
+# print(CustomerService.get_customerbyid(1))
+# print(AddressService.get_addressbyid(1))
+# print(type(AddressService.get_addressbyid(1)))
+# print(CustomerService.address_list())

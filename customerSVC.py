@@ -6,7 +6,7 @@ from datetime import datetime
 from pony.converting import str2datetime
 from pony.orm import *
 
-from initdb_estore import *
+from initdb_ebanking import *
 
 
 # Customer Service
