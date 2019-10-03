@@ -1,18 +1,14 @@
 from japronto import Application, RouteNotFoundException
 
-from crud_service import *
 from customerAPI import *
 
 api = Application()
 
 router = api.router
 
-# Product Router
-router.add_route("/customer/list", CustomerResource.list_customer, method="GET")
-router.add_route("/customer/{customer_id}", CustomerResource.get_customer, method="GET")
-router.add_route("/customer/create", CustomerResource.create_customer, method="POST")
-router.add_route("/customer/update/{customer_id}", CustomerResource.delete_customer, method="PUT")
-router.add_route("/customer/delete/{customer_id}", CustomerResource.delete_customer, method="DELETE")
+# router.add_route("/customer/list", CustomerResource.list_customer, method="GET")
+router.add_route("/address/list", CustomerResource.list_address, method="GET")
+router.add_route("/address/{address_id}", CustomerResource.getaddressbyid, method="GET")
 
 
 api.run(port=8000)
