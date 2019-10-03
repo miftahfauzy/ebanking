@@ -13,8 +13,10 @@ class CustomerResource:
         customers = CustomerService.customer_list()
         return request.Response(json=customers)
 
+
+class AddressResource:
     def list_address(request):
-        addresses = CustomerService.address_list()
+        addresses = AddressService.address_list()
         if len(addresses) == 0:
             result = {
                 "status": 401,
@@ -49,13 +51,84 @@ class CustomerResource:
             }
             return request.Response(code=500, json=output)
 
-        addressbyid = CustomerService.get_addressbyid(id)
-        if len(addressbyid) == 0:
+        addressbyid = AddressService.get_addressbyid(id)
+        if addressbyid["status"] == 404:
             result = {
-                "status": 401,
+                "status": 404,
                 "message": "address not found!"
             }
-            return request.Response(code=401, json=result)
-            pass
+            return request.Response(code=404, json=result)
+
         return request.Response(code=200, json=addressbyid)
+
+    def address_create(request):
+        try:
+            address_json = request.json
+        except JSONDecodeError:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": "Empty/incomplete on request body, A valid JSON document is required!",
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+        except ValueError as ve:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(ve),
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+        address = {}
+        output = {}
+        try:
+            address = AddressService.create_address(address_json)
+            return request.Response(code=201, json=address)
+        except KeyError as error:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(error),
+                "http status": 400,
+                "address": address,
+            }
+            return request.Response(code=400, json=output)
+
+    def address_update(request):
+        try:
+            address_json = request.json
+        except JSONDecodeError:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": "Empty/incomplete on request body, A valid JSON document is required!",
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+        try:
+            address_id = int(request.match_dict["address_id"])
+        except ValueError as ve:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(ve),
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+
+        arr_address = {}
+        output = {}
+
+        try:
+            updated_address = AddressService.update_address(address_json, address_id)
+            output = {
+                "status": "Success Updated",
+                "http status": 200,
+                "address": updated_address,
+            }
+            return request.Response(code=200, json=output)
+        except KeyError as error:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(error),
+                "http status": 400,
+                "address": address_json,
+            }
+            return request.Response(code=400, json=output)
 

@@ -155,5 +155,5 @@ class Transaction_types(db.Entity):
     bank_transactions = Set(Bank_transaction)
 
 
-sql_debug(True)
+# sql_debug(True)
 db.generate_mapping(create_tables=True)

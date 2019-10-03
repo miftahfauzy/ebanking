@@ -44,9 +44,12 @@ class CustomerService:
                 "message": "customer with id: " + str(cust_id) + " not found"
             }
             return result
+        customer_dict = customer.to_dict()
+
         result = {
             "status": 200,
             "message": "customer found",
+            # "customer": customer_dict
             "customer": {
                 "customer_id": customer.customer_id,
                 "first_name": customer.first_name,
@@ -95,13 +98,15 @@ class AddressService:
         address = Address.get(address_id=addr_id)
         if address is None:
             result = {
-                "status": 401,
+                "status": 404,
                 "message": "Address with id: " + str(addr_id) + " not found"
             }
             return result
+        address_dict = address.to_dict()
         result = {
             "status": 200,
             "message": "address found !",
+            # "address": address_dict
             "address": {
                 "address_id": address.address_id,
                 "street_address1": address.street_address1,
@@ -120,11 +125,90 @@ class AddressService:
     @db_session
     def create_address(address_payload):
         address_parse = json.loads(json.dumps(address_payload))
+        try:
+            _address = Address(
+                street_address1=address_parse["street_address1"],
+                street_address2=address_parse["street_address2"],
+                city=address_parse["city"],
+                zipcode=address_parse["zipcode"],
+                state=address_parse["state"],
+                country=address_parse["country"],
+                insert_at=datetime.now()
+            )
+            commit()
+            result = {
+                "status": 201,
+                "message": "address created !",
+                # "address": _address.to_dict()
+            # }
+                "address": {
+                    "address_id": _address.address_id,
+                    "street_address1": _address.street_address1,
+                    "street_address2": _address.street_address2,
+                    "city": _address.city,
+                    "zipcode": _address.zipcode,
+                    "state": _address.state,
+                    "country": _address.country,
+                    "insert_at": str(_address.insert_at),
+                    "update_at": str(_address.update_at)
+                }
+            }
+            return result
 
+        except KeyError as error:
+            output = {
+                "status": "Error : missing key/value of: " + str(error),
+                "http status": 400,
+                "address": address_parse,
+            }
+            return output
 
+    @db_session
+    def update_address(address_payload, address_id):
+        address_parse = json.loads(json.dumps(address_payload))
+        try:
+            address = Address.get_for_update(address_id=address_id)
+            address.street_address1 = address_parse["street_address1"]
+            address.street_address2 = address_parse["street_address2"]
+            address.city = address_parse["city"]
+            address.zipcode = address_parse["zipcode"]
+            address.state = address_parse["state"]
+            address.country = address_parse["country"]
+            address.update_at = datetime.now()
+            commit()
+            result = {
+                "status": "Success",
+                "message": "Success Update address",
+                "address": {
+                    "street_address1": address_parse["street_address1"],
+                    "street_address2": address_parse["street_address2"],
+                    "city": address_parse["city"],
+                    "zzicode": address_parse["zipcode"],
+                    "state": address_parse["state"],
+                    "country": address_parse["country"],
+                    "updated_at": str(datetime.now()),
+                },
+            }
+            return result
+        except ValueError:
+            result = {
+                "status": "Failed",
+                "message": "Failed Update address",
+                "address": {
+                    "street_address1": address_parse["street_address1"],
+                    "street_address2": address_parse["street_address2"],
+                    "city": address_parse["city"],
+                    "zzicode": address_parse["zipcode"],
+                    "state": address_parse["state"],
+                    "country": address_parse["country"],
+                    "updated_at": str(datetime.now()),
+                },
+            }
+            return result
 
 # if __name__ == "__main__":
     # print(CustomerService.customer_list())
     # print(CustomerService.get_customerbyid(1))
-    # print(CustomerService.get_addressbyid(1))
+    # print(AddressService.get_addressbyid(1))
+    # print(type(AddressService.get_addressbyid(1)))
 # print(CustomerService.address_list())
