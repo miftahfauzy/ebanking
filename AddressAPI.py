@@ -12,10 +12,7 @@ class AddressResource:
     def list_address(request):
         addresses = AddressService.address_list()
         if len(addresses) == 0:
-            result = {
-                "status": 401,
-                "message": "address empty"
-            }
+            result = {"status": 401, "message": "address empty"}
             return request.Response(code=401, json=result)
         return request.Response(code=200, json=addresses)
 
@@ -30,7 +27,7 @@ class AddressResource:
                 + request.match_dict["address_id"]
                 + "' must integer type!",
                 "http status: ": 500,
-                "exception: ": str(ve)
+                "exception: ": str(ve),
             }
             return request.Response(code=500, json=output)
         except RouteNotFoundException as noRoute:
@@ -47,10 +44,7 @@ class AddressResource:
 
         addressbyid = AddressService.get_addressbyid(id)
         if addressbyid["status"] == 404:
-            result = {
-                "status": 404,
-                "message": "address not found!"
-            }
+            result = {"status": 404, "message": "address not found!"}
             return request.Response(code=404, json=result)
 
         return request.Response(code=200, json=addressbyid)

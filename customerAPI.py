@@ -12,6 +12,3 @@ class CustomerResource:
     def list_customer(request):
         customers = CustomerService.customer_list()
         return request.Response(json=customers)
-
-
-
