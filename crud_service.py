@@ -5,6 +5,7 @@ from datetime import datetime
 
 from pony.converting import str2datetime
 from pony.orm import *
+from pony.orm.core import ObjectNotFound
 
 from initdb_ebanking import *
 
@@ -215,10 +216,28 @@ class AddressService:
             }
             return result
 
+    @db_session
+    def delete_address(address_id):
+        try:
+            address_deleted = Address[address_id].delete()
+        except ObjectNotFound:
+            result = {
+                "status": 404,
+                "message": "Address with id: " + str(address_id) + " not found"
+            }
+            return result
+        if address_deleted is None:
+            result = {
+                "status": 200,
+                "message": "Address with id: " + str(address_id) + " Success Deleted"
+            }
+            return result
 
-# if __name__ == "__main__":
-# print(CustomerService.customer_list())
-# print(CustomerService.get_customerbyid(1))
-# print(AddressService.get_addressbyid(1))
-# print(type(AddressService.get_addressbyid(1)))
-# print(CustomerService.address_list())
+
+if __name__ == "__main__":
+    # print(CustomerService.customer_list())
+    # print(CustomerService.get_customerbyid(1))
+    # print(AddressService.get_addressbyid(1))
+    # print(type(AddressService.get_addressbyid(1)))
+    # print(CustomerService.address_list())
+    print(AddressService.delete_address(1002))
