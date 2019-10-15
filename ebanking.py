@@ -15,5 +15,6 @@ router.add_route("/address/list", AddressResource.list_address, method="GET")
 router.add_route("/address/{address_id}", AddressResource.getaddressbyid, method="GET")
 router.add_route("/address/create", AddressResource.address_create, method="POST")
 router.add_route("/address/update/{address_id}", AddressResource.address_update, method="PUT")
+router.add_route("/address/delete/{address_id}", AddressResource.address_delete, method="DELETE")
 
 api.run(port=8000)

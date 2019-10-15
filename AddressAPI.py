@@ -119,3 +119,44 @@ class AddressResource:
                 "address": address_json,
             }
             return request.Response(code=400, json=output)
+
+
+    def address_delete(request):
+        try:
+            address_json = request.json
+        except JSONDecodeError:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": "Empty/incomplete on request body, A valid JSON document is required!",
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+        try:
+            address_id = int(request.match_dict["address_id"])
+        except ValueError as ve:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(ve),
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+
+        arr_address = {}
+        output = {}
+
+        try:
+            updated_address = AddressService.delete_address(address_json, address_id)
+            output = {
+                "status": "Success Deleted",
+                "http status": 200,
+                "address": updated_address,
+            }
+            return request.Response(code=200, json=output)
+        except KeyError as error:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(error),
+                "http status": 400,
+                "address": address_json,
+            }
+            return request.Response(code=400, json=output)
