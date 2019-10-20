@@ -240,4 +240,4 @@ class AddressService:
     # print(AddressService.get_addressbyid(1))
     # print(type(AddressService.get_addressbyid(1)))
     # print(CustomerService.address_list())
-    print(AddressService.delete_address(1004))
+    # print(AddressService.delete_address(1004))

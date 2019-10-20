@@ -18,8 +18,8 @@ class Branches(db.Entity):
     update_at = Optional(datetime)
     branches_employeess = Set('Branches_employees')
     accounts = Set('Account')
-    bank_transaction = Required('Bank_transaction')
-    address = Required('Address')
+    bank_transaction = Optional('Bank_transaction')
+    address = Optional('Address')
 
 
 class Branches_employees(db.Entity):
@@ -30,7 +30,7 @@ class Branches_employees(db.Entity):
     minimum_balance_restriction = Optional(Decimal)
     insert_at = Optional(datetime)
     update_at = Optional(datetime)
-    employee = Required('Employee')
+    employee = Optional('Employee')
 
 
 class Account_type(db.Entity):
@@ -49,7 +49,7 @@ class Account(db.Entity):
     account_type = Required(Account_type)
     insert_at = Optional(datetime)
     update_at = Optional(datetime)
-    account_customer = Required('Account_customer')
+    account_customer = Optional('Account_customer')
 
 
 class Employee(db.Entity):
@@ -63,7 +63,7 @@ class Employee(db.Entity):
     birth_of_date = Optional(date)
     insert_at = Optional(datetime)
     update_at = Optional(datetime)
-    address = Required('Address')
+    address = Optional('Address')
 
 
 class Customer(db.Entity):
@@ -74,11 +74,11 @@ class Customer(db.Entity):
     email = Optional(str, 55)
     insert_at = Optional(datetime)
     update_at = Optional(datetime)
-    account_customer = Required('Account_customer')
-    bank_transaction = Required('Bank_transaction')
-    credit_card = Required('Credit_card')
-    loan = Required('Loan')
-    address = Required('Address')
+    account_customer = Optional('Account_customer')
+    bank_transaction = Optional('Bank_transaction')
+    credit_card = Optional('Credit_card')
+    loan = Optional('Loan')
+    address = Optional('Address')
 
 
 class Account_customer(db.Entity):
@@ -95,7 +95,7 @@ class Bank_transaction(db.Entity):
     transaction_date = Optional(datetime)
     customers = Set(Customer)
     branchess = Set(Branches)
-    transaction_types = Required('Transaction_types')
+    transaction_types = Optional('Transaction_types')
 
 
 class Credit_card(db.Entity):
@@ -106,7 +106,7 @@ class Credit_card(db.Entity):
     customers = Set(Customer)
     insert_at = Optional(datetime)
     update_at = Optional(datetime)
-    cc_transaction = Required('Cc_transaction')
+    cc_transaction = Optional('Cc_transaction')
 
 
 class Cc_transaction(db.Entity):

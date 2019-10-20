@@ -10,6 +10,7 @@ from crud_service import *
 
 class AddressResource:
     def list_address(request):
+    
         addresses = AddressService.address_list()
         if len(addresses) == 0:
             result = {"status": 401, "message": "address empty"}
