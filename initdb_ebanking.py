@@ -7,7 +7,11 @@ from pony.orm import *
 db = Database()
 
 # PostgreSQL
-db.bind(provider='postgres', user='miftah', password='fonez', host='localhost', database='pony')
+# db.bind(provider='postgres', user='miftah', password='fonez', host='localhost', database='pony')
+
+# Oracle
+dsn = "localhost/xe"
+db.bind(provider='oracle', user='ebanking', password='P4ssw0rd', dsn=dsn)
 
 
 class Branches(db.Entity):
