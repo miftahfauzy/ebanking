@@ -1,7 +1,9 @@
 from japronto import Application, RouteNotFoundException
 
-from customerAPI import *
-from AddressAPI import *
+# from customerAPI import *
+# from AddressAPI import *
+
+from ebankingAPI import *
 
 api = Application()
 
@@ -9,6 +11,7 @@ router = api.router
 
 # Customer Router
 router.add_route("/customer/list", CustomerResource.list_customer, method="GET")
+router.add_route("/customer/{customer_id}", CustomerResource.getcustomerbyid, method="GET")
 
 # Address Router
 router.add_route("/address/list", AddressResource.list_address, method="GET")

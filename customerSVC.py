@@ -206,8 +206,8 @@ class AddressService:
             }
             return result
 
-# if __name__ == "__main__":
-    # print(CustomerService.customer_list())
+if __name__ == "__main__":
+    print(CustomerService.customer_list())
     # print(CustomerService.get_customerbyid(1))
     # print(AddressService.get_addressbyid(1))
     # print(type(AddressService.get_addressbyid(1)))

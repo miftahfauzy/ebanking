@@ -15,21 +15,37 @@ class CustomerService:
     @db_session
     def customer_list():
         arr_customer = []
-        customers = Customer.select()
+        customers = select(
+            (
+                c.customer_id,
+                c.first_name,
+                c.last_name,
+                c.date_of_birth,
+                c.email,
+                c.insert_at,
+                c.update_at,
+                c.account_customer,
+                c.bank_transaction,
+                c.credit_card,
+                c.loan,
+                c.address
+            )
+            for c in Customer
+        )[:]
 
         for customer in customers:
             json_customer = {
                 "customer_id": customer[0],
                 "first_name": customer[1],
                 "last_name": customer[2],
-                "date_of_birth": customer[3],
+                "date_of_birth": str(customer[3]),
                 "email": customer[4],
-                "insert_at": customer[5],
-                "update_at": customer[6],
+                "insert_at": str(customer[5]),
+                "update_at": str(customer[6]),
                 "account_customer": customer[7],
                 "bank_transaction": customer[8],
                 "credit_card": customer[9],
-                "load": customer[10],
+                "loan": customer[10],
                 "address": customer[11],
             }
             arr_customer.append(json_customer)
