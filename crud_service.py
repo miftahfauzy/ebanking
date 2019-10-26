@@ -129,62 +129,65 @@ class CustomerService:
             return output
 
     @db_session
-    def update_address(address_payload, address_id):
-        address_parse = json.loads(json.dumps(address_payload))
+    def update_customer(customer_payload, customer_id):
+        customer_parse = json.loads(json.dumps(customer_payload))
         try:
-            address = Address.get_for_update(address_id=address_id)
-            address.street_address1 = address_parse["street_address1"]
-            address.street_address2 = address_parse["street_address2"]
-            address.city = address_parse["city"]
-            address.zipcode = address_parse["zipcode"]
-            address.state = address_parse["state"]
-            address.country = address_parse["country"]
-            address.update_at = datetime.now()
+            customer = Customer.get_for_update(customer_id=customer_id)
+            customer.first_name = customer_parse["first_name"]
+            customer.last_name = customer_parse["last_name"]
+            customer.date_of_birth = customer_parse["date_of_birth"]
+            customer.email = customer_parse["email"]
+            customer.account_customer = customer_parse["account_customer"]
+            customer.bank_transaction = customer_parse["bank_transaction"]
+            customer.loan = customer_parse["loan"]
+            customer.update_at = datetime.now()
             commit()
             result = {
                 "status": "Success",
-                "message": "Success Update address",
-                "address": {
-                    "street_address1": address_parse["street_address1"],
-                    "street_address2": address_parse["street_address2"],
-                    "city": address_parse["city"],
-                    "zzicode": address_parse["zipcode"],
-                    "state": address_parse["state"],
-                    "country": address_parse["country"],
+                "message": "Success Update customer",
+                "customer": {
+                    "first_name": customer_parse["first_name"],
+                    "last_name": customer_parse["last_name"],
+                    "date_of_birth": customer_parse["date_of_birth"],
+                    "email": customer_parse["email"],
+                    "account_customer": customer_parse["account_customer"],
+                    "country": customer_parse["bank_transaction"],
+                    "loan": customer_parse["loan"],
                     "updated_at": str(datetime.now()),
                 },
             }
             return result
         except ValueError:
             result = {
-                "status": "Failed",
-                "message": "Failed Update address",
-                "address": {
-                    "street_address1": address_parse["street_address1"],
-                    "street_address2": address_parse["street_address2"],
-                    "city": address_parse["city"],
-                    "zzicode": address_parse["zipcode"],
-                    "state": address_parse["state"],
-                    "country": address_parse["country"],
+                "status": str(ValueError),
+                "message": "Failed Update customer",
+                "customer": {
+                    "first_name": customer_parse["first_name"],
+                    "last_name": customer_parse["last_name"],
+                    "date_of_birth": customer_parse["date_of_birth"],
+                    "email": customer_parse["email"],
+                    "account_customer": customer_parse["account_customer"],
+                    "country": customer_parse["bank_transaction"],
+                    "loan": customer_parse["loan"],
                     "updated_at": str(datetime.now()),
                 },
             }
             return result
 
     @db_session
-    def delete_address(address_id):
+    def delete_customer(customer_id):
         try:
-            address_deleted = Address[address_id].delete()
+            customer_deleted = Customer[customer_id].delete()
         except ObjectNotFound:
             result = {
                 "status": 404,
-                "message": "Address with id: " + str(address_id) + " not found"
+                "message": "Customer with id: " + str(customer_id) + " not found"
             }
             return result
-        if address_deleted is None:
+        if customer_deleted is None:
             result = {
                 "status": 200,
-                "message": "Address with id: " + str(address_id) + " Success Deleted"
+                "message": "Customer with id: " + str(customer_id) + " Success Deleted"
             }
             return result
 
