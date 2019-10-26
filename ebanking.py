@@ -9,9 +9,12 @@ api = Application()
 
 router = api.router
 
-# Customer Router
+# Customer Router CRUD
 router.add_route("/customer/list", CustomerResource.list_customer, method="GET")
 router.add_route("/customer/{customer_id}", CustomerResource.getcustomerbyid, method="GET")
+router.add_route("/customer/create", CustomerResource.customer_create, method="POST")
+router.add_route("/customer/update/{customer_id}", CustomerResource.customer_update, method="PUT")
+router.add_route("/customer/delete/{customer_id}", CustomerResource.customer_delete, method="DELETE")
 
 # Address Router
 router.add_route("/address/list", AddressResource.list_address, method="GET")

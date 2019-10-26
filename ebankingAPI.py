@@ -163,11 +163,11 @@ class CustomerResource:
         output = {}
 
         try:
-            updated_customer = CustomerService.delete_customer(customer_json, customer_id)
+            deleted_customer = CustomerService.delete_customer(customer_json, customer_id)
             output = {
                 "status": "Success Deleted",
                 "http status": 200,
-                "address": updated_customer,
+                "address": deleted_customer,
             }
             return request.Response(code=200, json=output)
         except KeyError as error:
