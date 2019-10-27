@@ -138,6 +138,46 @@ class CustomerResource:
             }
             return request.Response(code=400, json=output)
 
+    def customer_updateadress(request):
+         try:
+            customer_json = request.json
+        except JSONDecodeError:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": "Empty/incomplete on request body, A valid JSON document is required!",
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+        try:
+            customer_id = int(request.match_dict["customer_id"])
+        except ValueError as ve:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(ve),
+                "http status": 400,
+            }
+            return request.Response(code=400, json=output)
+
+        arr_customer = {}
+        output = {}
+
+        try:
+            updated_customer = CustomerService.customer_updateadress(customer_id, address_id)
+            output = {
+                "status": "Success Updated",
+                "http status": 200,
+                "address": updated_customer,
+            }
+            return request.Response(code=200, json=output)
+        except KeyError as error:
+            output = {
+                "status": "Error: 400 Bad Request",
+                "description": str(error),
+                "http status": 400,
+                "address": customer_json,
+            }
+            return request.Response(code=400, json=output)
+       
 
     def customer_delete(request):
         try:

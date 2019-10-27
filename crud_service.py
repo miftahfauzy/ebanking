@@ -87,10 +87,13 @@ class CustomerService:
     def create_customer(customer_payload):
         customer_parse = json.loads(json.dumps(customer_payload))
         try:
-            _customer = Address(
+            _customer = Customer(
                 first_name=customer_parse["first_name"],
                 last_name=customer_parse["last_name"],
-                date_of_birth=customer_parse["date_of_birth"],
+
+                # change date string input "dd-mm-yyyy" to date format
+                date_of_birth=datetime.strptime(customer_parse["date_of_birth"],'%d-%m-%Y').date(),
+
                 email=customer_parse["email"],
                 account_customer=customer_parse["account_customer"],
                 bank_transaction=customer_parse["bank_transaction"],
@@ -151,7 +154,7 @@ class CustomerService:
                     "date_of_birth": customer_parse["date_of_birth"],
                     "email": customer_parse["email"],
                     "account_customer": customer_parse["account_customer"],
-                    "country": customer_parse["bank_transaction"],
+                    "bank_transaction": customer_parse["bank_transaction"],
                     "loan": customer_parse["loan"],
                     "updated_at": str(datetime.now()),
                 },
@@ -167,8 +170,67 @@ class CustomerService:
                     "date_of_birth": customer_parse["date_of_birth"],
                     "email": customer_parse["email"],
                     "account_customer": customer_parse["account_customer"],
-                    "country": customer_parse["bank_transaction"],
+                    "bank_transaction": customer_parse["bank_transaction"],
                     "loan": customer_parse["loan"],
+                    "updated_at": str(datetime.now()),
+                },
+            }
+            return result
+
+    @db_session
+    def update_customeraddress(customer_id, address_id):
+        try:
+            customer = Customer.get_for_update(customer_id=customer_id)
+            try:
+                address = Address.get_for_update(address_id=address_id)
+            except TypeError:
+                address.customer = customer
+                address.update_at = datetime.now()
+                commit()
+                address_json = {
+                    "street_address1": address.street_address1,
+                    "street_address2": address.street_address2,
+                    "city": address.city,
+                    "zzicode": address.zipcode,
+                    "state": address.state,
+                    "country": address.country,
+                    "customer": customer,
+                    "updated_at": str(datetime.now()),
+                }
+                customer.address = address_id
+                customer.update_at = datetime.now()
+                commit()
+            result = {
+                "status": "Success",
+                "message": "Success Update customer with address",
+                "customer": {
+                    "customer_id": customer.customer_id
+                    "first_name": customer.first_name,
+                    "last_name": customer.last_name,
+                    "date_of_birth": str(customer.date_of_birth),
+                    "email": customer.email,
+                    "account_customer": customer.account_customer,
+                    "bank_transaction": customer.bank_transaction,
+                    "loan": customer.loan,
+                    "address": address_json
+                    "updated_at": str(datetime.now()),
+                },
+            }
+            return result
+        except ValueError:
+            result = {
+                "status": str(ValueError),
+                "message": "Failed Update customer",
+                "customer": {
+                    "customer_id": customer.customer_id
+                    "first_name": customer.first_name,
+                    "last_name": customer.last_name,
+                    "date_of_birth": str(customer.date_of_birth),
+                    "email": customer.email,
+                    "account_customer": customer.account_customer,
+                    "bank_transaction": customer.bank_transaction,
+                    "loan": customer.loan,
+                    "address": address
                     "updated_at": str(datetime.now()),
                 },
             }
